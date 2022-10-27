@@ -1,0 +1,18 @@
+.app {
+  width: 100%;
+  height: 100%;
+}
+
+.flexContainer{
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.sceneWrapper {
+  flex: 1;
+}
+
+.panelWrapper {
+  width: clamp(300px, 30%, 400px);
+}

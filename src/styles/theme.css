@@ -1,0 +1,49 @@
+:root {
+  /* Dark Theme */
+  --brand-base: 244, 63, 94;
+  --primary-base: 253, 180, 189;
+  --primary-v1-base: 244, 63, 94;
+  --primary-v2-base: 190, 18, 60;
+  --secondary-base: 193, 180, 253;
+  --secondary-v1-base: 139, 92, 246;
+  --secondary-v2-base: 109, 40, 217;
+  --error-base: 208, 102, 121;
+
+  --text-base: 255, 255, 255;
+
+  --0dp-base: 24, 21, 32;
+  --1dp-base: 35, 32, 43;
+  --2dp-base: 40, 37, 48;
+  --3dp-base: 42, 39, 50;
+  --4dp-base: 44, 41, 52;
+  --6dp-base: 48, 45, 56;
+  --8dp-base: 51, 48, 59;
+  --12dp-base: 55, 52, 63;
+  --16dp-base: 57, 54, 65;
+  --24dp-base: 60, 57, 68;
+
+  --brand: rgba(var(--brand-base), 1);
+  --primary: rgba(var(--primary-base), 1);
+  --primary-v1: rgba(var(--primary-v1-base), 1);
+  --primary-v2: rgba(var(--primary-v2-base), 1);
+  --secondary: rgba(var(--secondary-base), 1);
+  --secondary-v1: rgba(var(--secondary-v1-base), 1);
+  --secondary-v2: rgba(var(--secondary-v2-base), 1);
+  --accent: #a7f4d0;
+  --error: rgba(var(--error-base), 1);
+  --text-high: rgba(var(--text-base), 1);
+  --text-medium: rgba(var(--text-base), 0.87);
+  --text-low: rgba(var(--text-base), 0.6);
+  --text-disabled: rgba(var(--text-base), 0.38);
+  --border-color: rgba(var(--text-base), 0.12);
+  --0dp: rgba(var(--0dp-base), 1);
+  --1dp: rgba(var(--1dp-base), 1);
+  --2dp: rgba(var(--2dp-base), 1);
+  --3dp: rgba(var(--3dp-base), 1);
+  --4dp: rgba(var(--4dp-base), 1);
+  --6dp: rgba(var(--6dp-base), 1);
+  --8dp: rgba(var(--8dp-base), 1);
+  --12dp: rgba(var(--12dp-base), 1);
+  --16dp: rgba(var(--16dp-base), 1);
+  --24dp: rgba(var(--24dp-base), 1);
+}

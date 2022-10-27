@@ -1,0 +1,25 @@
+.container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.editingNotice {
+  position: absolute;
+  min-width: 126px;
+  right: 8px;
+  top: 8px;
+  padding: 8px;
+  background: var(--16dp);
+  border-radius: 8px;
+}
+
+.editingNotice > div {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.editingNotice > div > * + * {
+  margin-left: 8px;
+}

@@ -1,0 +1,33 @@
+:root {
+  --serif-font: 'Fredoka', serif, system-ui;
+  --sans-serif-font: 'Roboto Slab', sans-serif, system-ui;
+  --mono-font: 'JetBrains Mono', monospace, system-ui;
+
+  --header-font: var(--serif-font);
+  --body-font: var(--sans-serif-font);
+  --code-font: var(--mono-font);
+}
+
+/* Tokens */
+:root {
+  --text-size-xs: calc((10 / 16) * 1rem);
+  --text-size-s: calc((11 / 16) * 1rem);
+  --text-size-m: calc((12 / 16) * 1rem);
+  --text-size-l: calc((14 / 16) * 1rem);
+  --text-size-xl: calc((16 / 16) * 1rem);
+  --text-size-2xl: calc((18 / 16) * 1rem);
+  --text-size-3xl: calc((24 / 16) * 1rem);
+
+  --line-height-xs: 12px;
+  --line-height-s: 16px;
+  --line-height-m: 20px;
+  --line-height-l: 24px;
+  --line-height-xl: 28px;
+  --line-height-2xl: 32px;
+  --line-height-3xl: 40px;
+
+  --text-weight-light: 300;
+  --text-weight-regular: 400;
+  --text-weight-medium: 500;
+  --text-weight-bold: 700;
+}

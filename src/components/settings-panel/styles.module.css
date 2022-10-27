@@ -1,0 +1,34 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--2dp);
+}
+
+.container > * {
+  padding-inline: 8px;
+}
+
+.container > * + * {
+  margin-top: 8px;
+}
+
+.container:first-child {
+  padding-top: 8px;
+}
+
+.container:last-child {
+  padding-bottom: 8px;
+}
+
+.wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wrapper > * + * {
+  margin-left: 8px;
+}

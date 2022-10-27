@@ -1,0 +1,14 @@
+:root {
+  --header: 72px;
+  --compact-header: 52px;
+  --screen-minus-header: calc(100vh - var(--header));
+  --header-gap: calc((var(--header) - var(--compact-header)) / 2);
+
+  --sizing-xs: 4px;
+  --sizing-s: 8px;
+  --sizing-m: 12px;
+  --sizing-l: 16px;
+  --sizing-xl: 24px;
+  --sizing-2xl: 32px;
+  --sizing-3xl: 48px;
+}

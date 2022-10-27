@@ -1,0 +1,27 @@
+.container {
+  width: 100%;
+  color: var(--text-medium);
+  min-height: 42px;
+  background-color: var(--8dp);
+  display: block;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.container:is(:hover, :active){
+  background-color: var(--16dp);
+  color: var(--accent);
+  border: 1px solid var(--text-disabled);
+}
+
+.container:disabled {
+  background-color: var(--4dp);
+  color: var(--text-disabled);
+  border: 1px solid var(--text-disabled);
+  cursor: not-allowed;
+}

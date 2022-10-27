@@ -23,3 +23,17 @@
 .editingNotice > div > * + * {
   margin-left: 8px;
 }
+
+.keyboardControls {
+  position: absolute;
+  min-width: 126px;
+  left: 8px;
+  top: 8px;
+  padding: 8px;
+  background: var(--16dp);
+  border-radius: 8px;
+}
+
+.guideContainer {
+  
+}

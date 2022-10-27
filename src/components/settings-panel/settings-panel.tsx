@@ -138,7 +138,7 @@ function SettingsPanel({
       </div>
       <div className={styles.wrapper}>
         <Input
-          helperText="rotation-z"
+          helperText="rotation-z (deg)"
           value={input.rotation.z}
           onChange={(value: any) => {
             setInput({

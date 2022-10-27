@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./styles.module.css";
 import SceneBuilder from "@/lib/scene-builder";
-import { Object3D } from "@/types/object";
+import { keyboardModes, Object3D } from "@/types/object";
 import {
   RiEdit2Line as EditingIcon,
   RiImageAddLine as AddingIcon,
@@ -10,6 +10,7 @@ import {
 type ReactSceneProps = {
   objectsMap: Record<string, Object3D>;
   isEditing: boolean;
+  kbdMode: keyboardModes;
 };
 
 /**
@@ -97,6 +98,30 @@ class ReactScene extends React.Component<ReactSceneProps> {
             </div>
           )}
         </div>
+        {this.props.isEditing && (
+          <div className={styles.keyboardControls}>
+            {this.props.kbdMode ? (
+              <div>
+                <div>Esc - Exit keyboard edit mode</div>
+                <div>I - Increase</div>
+                <div>K - Decrease</div>
+                <div>Active mode: {this.props.kbdMode}</div>
+              </div>
+            ) : (
+              <div>
+                <div>Q - Position-X</div>
+                <div>W - Position-Y</div>
+                <div>E - Position-Z</div>
+                <br />
+                <div>A - Scale-X</div>
+                <div>S - Scale-Y</div>
+                <div>D - Scale-Z</div>
+                <br />
+                <div>Z - Scale-Z</div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }

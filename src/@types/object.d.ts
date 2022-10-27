@@ -23,3 +23,13 @@ export type Object3D = {
     color: Color;
   };
 };
+
+export type keyboardModes =
+  | "pos-x"
+  | "pos-y"
+  | "pos-z"
+  | "scale-x"
+  | "scale-y"
+  | "scale-z"
+  | "rot-z"
+  | undefined;

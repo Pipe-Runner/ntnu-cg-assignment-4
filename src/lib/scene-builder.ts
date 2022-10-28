@@ -3,9 +3,12 @@ import vertexShaderSource from "./shaders/vert.glsl";
 import fragmentShaderSource from "./shaders/frag.glsl";
 import createProgram from "./utils/program-creator";
 import { getLocations } from "./utils/locations";
-import quad from "./objects/quad";
-import { Mat4 } from "cuon-matrix-ts";
+import { Mat4, Vec3 } from "cuon-matrix-ts";
 import { Color, ObjectTypes, Position, Rotation, Scale } from "@/types/object";
+import Cylinder from "./objects/cylinder";
+// import Cube from "./objects/cube";
+// import Quad from "./objects/quad";
+// import pyramid from "./objects/pyramid";
 
 class SceneBuilder {
   private canvas: HTMLCanvasElement;
@@ -13,6 +16,9 @@ class SceneBuilder {
   private objectMap: Record<string, baseObject> = {};
   private locations: Record<string, number>;
   private viewProjMatrix: Mat4;
+  private lightColor: [number, number, number];
+  private lightDirection: Vec3;
+  private ambientLight: [number, number, number];
 
   constructor(private container: HTMLDivElement) {
     this.canvas = document.createElement("canvas");
@@ -21,6 +27,9 @@ class SceneBuilder {
     this.container.appendChild(this.canvas);
     this.gl = this.getGlContext(this.canvas);
 
+    // Enable depth test
+    this.gl.enable(this.gl.DEPTH_TEST);
+
     const program = createProgram(
       this.gl,
       vertexShaderSource,
@@ -28,17 +37,38 @@ class SceneBuilder {
     );
     this.gl.useProgram(program);
 
-    const variables = ["aPosition", "aColor", "uModelMatrix", "uVpMatrix"];
+    const variables = [
+      "aPosition",
+      "aColor",
+      "aNormal",
+      "uModelMatrix",
+      "uVpMatrix",
+      "uNormalMatrix",
+      "uLightColor",
+      "uLightDirection",
+      "uAmbientLight",
+    ];
     this.locations = getLocations(this.gl, program, variables);
 
+    // view + projection matrix
     this.viewProjMatrix = new Mat4();
     this.viewProjMatrix.setPerspective(
-      30,
+      10,
       this.gl.canvas.width / this.gl.canvas.height,
       1,
       100
     );
-    this.viewProjMatrix.lookAt(3.06, 2.5, 10.0, 0, 0, -2, 0, 1, 0);
+    this.viewProjMatrix.lookAt(3, 2.5, 20.0, 0, 0, -2, 0, 1, 0);
+
+    // set light color (r, g, b)
+    this.lightColor = [1.0, 1.0, 1.0];
+
+    // set light direction
+    this.lightDirection = new Vec3(0.0, 3.0, 4.0);
+    this.lightDirection.normalize();
+
+    // ambient light
+    this.ambientLight = [0.2, 0.2, 0.2];
 
     this.objectMap = {};
   }
@@ -52,8 +82,38 @@ class SceneBuilder {
     color: Color
   ) {
     switch (type) {
-      case "quad":
-        this.objectMap[id] = new quad(
+      // case "quad":
+      //   this.objectMap[id] = new Quad(
+      //     this.gl,
+      //     this.locations,
+      //     position,
+      //     scale,
+      //     rotation,
+      //     color
+      //   );
+      //   break;
+      // case "cube":
+      //   this.objectMap[id] = new Cube(
+      //     this.gl,
+      //     this.locations,
+      //     position,
+      //     scale,
+      //     rotation,
+      //     color
+      //   );
+      //   break;
+      // case "pyramid":
+      //   this.objectMap[id] = new pyramid(
+      //     this.gl,
+      //     this.locations,
+      //     position,
+      //     scale,
+      //     rotation,
+      //     color
+      //   );
+      //   break;
+      case "cylinder":
+        this.objectMap[id] = new Cylinder(
           this.gl,
           this.locations,
           position,
@@ -62,7 +122,6 @@ class SceneBuilder {
           color
         );
         break;
-
       default:
         break;
     }
@@ -114,6 +173,18 @@ class SceneBuilder {
       false,
       this.viewProjMatrix.elements
     );
+
+    // set light color uniform
+    this.gl.uniform3fv(this.locations.uLightColor, this.lightColor);
+
+    // set light direction uniform
+    this.gl.uniform3fv(
+      this.locations.uLightDirection,
+      this.lightDirection.elements
+    );
+
+    // set ambient light uniform
+    this.gl.uniform3fv(this.locations.uAmbientLight, this.ambientLight);
 
     Object.values(this.objectMap).forEach((object) => {
       object.render();

@@ -1,119 +1,90 @@
 import { useEffect, useRef, useState } from "react";
-import { keyboardModes, Object3D, ObjectTypes } from "./@types/object";
+import {
+  keyboardModes,
+  Object3D,
+  Object3DExtended,
+  ObjectTypes,
+  ResetType,
+} from "./@types/object";
 import styles from "./App.module.css";
 import ReactScene from "./components/react-scene";
+import sceneRef from "./components/react-scene";
 import SettingsPanel from "./components/settings-panel";
-import {
-  initialColor,
-  initialPosition,
-  initialRotation,
-  initialScale,
-} from "./lib/constants/initial-values";
+import { useKeyboard } from "./hooks/use-keyboard";
+import { initialState } from "./lib/constants/initial-values";
 
 function App() {
-  const reactScene = useRef<ReactScene>(null);
+  const sceneRef = useRef<sceneRef>(null);
   const [kbdMode, setKbdMode] = useState<keyboardModes>(undefined);
 
-  const [objectsMap, setObjectMap] = useState<Record<string, Object3D>>({});
-  const [selectedObjectID, setSelectedObjectID] = useState<string | undefined>(
+  const [objectsMap, setObjectMap] = useState<Record<string, Object3DExtended>>(
+    {}
+  );
+  const [activeObjectId, setActiveObjectId] = useState<string | undefined>(
     undefined
   );
-  const [input, setInput] = useState(
-    JSON.parse(
-      JSON.stringify({
-        position: initialPosition,
-        scale: initialScale,
-        rotation: initialRotation,
-        color: initialColor,
-      })
-    )
-  );
+  const [input, setInput] = useState<Object3D>({ ...initialState });
 
   useEffect(() => {
-    const keybrdEventHandler = (e: KeyboardEvent) => {
-      if (!selectedObjectID) {
-        return;
-      }
-
-      switch (e.code) {
-        case "KeyQ":
-          !kbdMode && setKbdMode("pos-x");
-          break;
-        case "KeyW":
-          !kbdMode && setKbdMode("pos-y");
-          break;
-        case "KeyE":
-          !kbdMode && setKbdMode("pos-z");
-          break;
-        case "KeyA":
-          !kbdMode && setKbdMode("scale-x");
-          break;
-        case "KeyS":
-          !kbdMode && setKbdMode("scale-y");
-          break;
-        case "KeyD":
-          !kbdMode && setKbdMode("scale-z");
-          break;
-        case "KeyZ":
-          !kbdMode && setKbdMode("rot-z");
-        case "Escape":
-          kbdMode && setKbdMode(undefined);
-          break;
-        case "KeyI":
-          kbdMode && updateInputViaKbd(kbdMode, +0.25);
-          break;
-        case "KeyK":
-          kbdMode && updateInputViaKbd(kbdMode, -0.25);
-          break;
-
-        default:
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", keybrdEventHandler);
-
-    return () => {
-      window.removeEventListener("keydown", keybrdEventHandler);
-    };
-  }, [selectedObjectID, kbdMode]);
-
-  useEffect(() => {
-    if (selectedObjectID === undefined) {
+    if (activeObjectId === undefined) {
+      /**
+       * Reset input and keyboard mode if nothing is selected
+       */
       resetInput();
       kbdMode && setKbdMode(undefined);
     } else {
+      /**
+       * Set input values to selected object
+       */
       setInput({
-        position: objectsMap[selectedObjectID].position,
-        scale: objectsMap[selectedObjectID].scale,
-        rotation: objectsMap[selectedObjectID].rotation,
-        color: objectsMap[selectedObjectID].color,
+        ...objectsMap[activeObjectId],
       });
     }
-  }, [selectedObjectID]);
+  }, [activeObjectId]);
 
+  /**
+   * Update active object if input changes
+   */
   useEffect(() => {
-    // TODO: Fix redundant re-rendering during checkbox toggle
-    if (selectedObjectID) {
-      onUpdateObject(selectedObjectID, input);
+    if (activeObjectId) {
+      onUpdateObject(activeObjectId, {
+        ...objectsMap[activeObjectId],
+        ...input,
+      });
     }
   }, [input]);
 
   const updateInputViaKbd = (key: string, update: number) => {
-    
+    const inputKey = key as keyof Object3D;
+
+    const newInput = {
+      ...input,
+      [inputKey]: (input[inputKey] as number) + update,
+    };
+    if (inputKey.startsWith("pos")) {
+      newInput.isPositionDirty = true;
+    }
+    if (inputKey.startsWith("scale")) {
+      newInput.isScaleDirty = true;
+    }
+    if (inputKey.startsWith("rotation")) {
+      newInput.isRotationDirty = true;
+    }
+
+    setInput(newInput);
   };
 
+  /**
+   * Handle keyboard events
+   */
+  useKeyboard(
+    [activeObjectId, kbdMode, input, updateInputViaKbd],
+    setKbdMode,
+    updateInputViaKbd
+  );
+
   const resetInput = () => {
-    setInput(
-      JSON.parse(
-        JSON.stringify({
-          position: initialPosition,
-          scale: initialScale,
-          rotation: initialRotation,
-          color: initialColor,
-        })
-      )
-    );
+    setInput({ ...initialState });
   };
 
   const onAddObject = (type: ObjectTypes) => {
@@ -122,21 +93,20 @@ function App() {
     /**
      * creating deep copy of the object state to avoid overriding the initial values
      */
+    const newObject = JSON.parse(
+      JSON.stringify({
+        id,
+        type,
+        history: JSON.parse(JSON.stringify(input)), // making a deep copy of initial state
+        ...input,
+      })
+    );
     setObjectMap({
       ...objectsMap,
-      [id]: JSON.parse(
-        JSON.stringify({
-          id,
-          type,
-          isPositionDirty: false,
-          isScaleDirty: false,
-          isRotationDirty: false,
-          isColorDirty: false,
-          history: JSON.parse(JSON.stringify(input)),
-          ...input,
-        })
-      ),
+      [id]: newObject,
     });
+
+    sceneRef.current?.addObject(newObject);
 
     /**
      * Reset input after adding
@@ -145,6 +115,8 @@ function App() {
   };
 
   const onRemoveObject = (id: string) => {
+    sceneRef.current?.deleteObject(id);
+
     const newObjectsMap = Object.entries(objectsMap).reduce(
       (acc, [key, value]) => {
         if (key !== id) {
@@ -152,85 +124,59 @@ function App() {
         }
         return acc;
       },
-      {} as Record<string, Object3D>
+      {} as Record<string, Object3DExtended>
     );
     setObjectMap(newObjectsMap);
-    setSelectedObjectID(undefined);
+    setActiveObjectId(undefined);
   };
 
-  const onResetObject = (
-    id: string,
-    type: "all" | "rotation" | "color" | "scale" | "position" = "all"
-  ) => {
-    const historyCopy = JSON.parse(JSON.stringify(objectsMap[id].history));
+  /**
+   * Since reset can only happen if an object is active,
+   * we can only update the input and the useEffect defined above will take care of updating the object
+   */
+  const onResetObject = (id: string, type: ResetType = "all") => {
+    const historyCopy = { ...objectsMap[id].history };
 
     switch (type) {
       case "all":
-        onUpdateObject(id, {
-          isColorDirty: false,
-          isPositionDirty: false,
-          isScaleDirty: false,
-          isRotationDirty: false,
-          ...historyCopy,
-        });
-
-        /**
-         * Since we are updating the object state, we need to update the input state as well
-         * This might cause a double update, but it's fine for now
-         */
         setInput({
-          position: historyCopy.position,
-          scale: historyCopy.scale,
-          rotation: historyCopy.rotation,
-          color: historyCopy.color,
+          ...historyCopy,
         });
         break;
       case "color":
-        onUpdateObject(id, {
-          ...objectsMap[id],
-          isColorDirty: false,
-          color: historyCopy.color,
-        });
-
         setInput({
           ...input,
-          color: historyCopy.color,
+          r: historyCopy.r,
+          g: historyCopy.g,
+          b: historyCopy.b,
+          isColorDirty: false,
         });
         break;
       case "position":
-        onUpdateObject(id, {
-          ...objectsMap[id],
+        setInput({
+          ...input,
+          posX: historyCopy.posX,
+          posY: historyCopy.posY,
+          posZ: historyCopy.posZ,
           isPositionDirty: false,
-          position: historyCopy.position,
-        });
-
-        setInput({
-          ...input,
-          position: historyCopy.position,
-        });
-        break;
-      case "rotation":
-        onUpdateObject(id, {
-          ...objectsMap[id],
-          isRotationDirty: false,
-          rotation: historyCopy.rotation,
-        });
-
-        setInput({
-          ...input,
-          rotation: historyCopy.rotation,
         });
         break;
       case "scale":
-        onUpdateObject(id, {
-          ...objectsMap[id],
-          isScaleDirty: false,
-          scale: historyCopy.scale,
-        });
-
         setInput({
           ...input,
-          scale: historyCopy.scale,
+          scaleX: historyCopy.scaleX,
+          scaleY: historyCopy.scaleY,
+          scaleZ: historyCopy.scaleZ,
+          isScaleDirty: false,
+        });
+        break;
+      case "rotation":
+        setInput({
+          ...input,
+          rotationX: historyCopy.rotationX,
+          rotationY: historyCopy.rotationY,
+          rotationZ: historyCopy.rotationZ,
+          isRotationDirty: false,
         });
         break;
       default:
@@ -238,13 +184,13 @@ function App() {
     }
   };
 
-  const onUpdateObject = (id: string, newState: Object3D) => {
+  const onUpdateObject = (id: string, newState: Object3DExtended) => {
     setObjectMap({
       ...objectsMap,
-      [id]: { ...objectsMap[id], ...newState },
+      [id]: newState,
     });
 
-    reactScene.current?.updateObject(id, newState);
+    sceneRef.current?.updateObject(id, newState);
   };
 
   return (
@@ -252,8 +198,8 @@ function App() {
       <div className={styles.flexContainer}>
         <div className={styles.sceneWrapper}>
           <ReactScene
-            isEditing={!!selectedObjectID}
-            ref={reactScene}
+            isEditing={!!activeObjectId}
+            ref={sceneRef}
             objectsMap={objectsMap}
             kbdMode={kbdMode}
           />
@@ -265,8 +211,8 @@ function App() {
             onClickAdd={onAddObject}
             onClickRemove={onRemoveObject}
             objectsMap={objectsMap}
-            selectedObjectID={selectedObjectID}
-            onSelectedObjectIDChange={setSelectedObjectID}
+            activeObjectId={activeObjectId}
+            onActiveObjectIdChange={setActiveObjectId}
             onClickReset={onResetObject}
           />
         </div>

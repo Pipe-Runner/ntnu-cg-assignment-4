@@ -2,7 +2,29 @@
 // import { setAndActivateBuffer, setIndex } from "../utils/gpu-data";
 // import BaseObject from "./base-object";
 
-// class Quad extends BaseObject {
+// const vertices = [
+//   0,
+//   1,
+//   0, // v4
+//   0.5,
+//   0,
+//   0.5, // v0
+//   0.5,
+//   0,
+//   -0.5, // v1
+//   -0.5,
+//   0,
+//   -0.5, // v2
+//   -0.5,
+//   0,
+//   0.5, // v3
+// ];
+
+// const colors = new Array(15);
+
+// const indices = [0, 1, 2, 0, 2, 3, 0, 1, 4, 1, 2, 4, 3, 2, 4, 0, 3, 4];
+
+// class Pyramid extends BaseObject {
 //   constructor(
 //     gl: WebGL2RenderingContext,
 //     private locations: Record<string, number>,
@@ -17,10 +39,10 @@
 //       scale,
 //       rotation,
 //       color,
-//       [-0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5],
-//       [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0],
-//       [0, 1, 2, 1, 2, 3],
-//       4
+//       vertices,
+//       colors,
+//       indices,
+//       colors.length / 3
 //     );
 //   }
 
@@ -28,7 +50,7 @@
 //     /**
 //      * Set attributes
 //      */
-//     setAndActivateBuffer(this.gl, this.locations.aPosition, this.vertices, 2);
+//     setAndActivateBuffer(this.gl, this.locations.aPosition, this.vertices, 3);
 //     setAndActivateBuffer(this.gl, this.locations.aColor, this.colorsData, 3);
 //     setIndex(this.gl, this.indices);
 
@@ -45,6 +67,6 @@
 //   }
 // }
 
-// export { Quad as default };
+// export { Pyramid as default };
 
 export {}

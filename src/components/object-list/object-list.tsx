@@ -1,31 +1,31 @@
-import { Object3D } from "@/types/object";
+import { Object3DExtended } from "@/types/object";
 import styles from "./styles.module.css";
 
 type ObjectListProps = {
-  objectsMap: Record<string, Object3D>;
-  onSelectedObjectIDChange: (id: string | undefined) => void;
-  selectedObjectID: string | undefined;
+  objectsMap: Record<string, Object3DExtended>;
+  onActiveObjectIdChange: (id: string | undefined) => void;
+  activeObjectId: string | undefined;
 };
 
 function ObjectList({
   objectsMap,
-  selectedObjectID,
-  onSelectedObjectIDChange,
+  activeObjectId,
+  onActiveObjectIdChange,
 }: ObjectListProps) {
   return (
     <div className={styles.container}>
       {Object.values(objectsMap).map((object) => (
         <div
           onClick={() =>
-            selectedObjectID === object.id
-              ? onSelectedObjectIDChange(undefined)
-              : onSelectedObjectIDChange(object.id)
+            activeObjectId === object.id
+              ? onActiveObjectIdChange(undefined)
+              : onActiveObjectIdChange(object.id)
           }
           key={object.id}
           className={styles.itemContainer}
         >
           <div className={styles.checkBox}>
-            {selectedObjectID === object.id && (
+            {activeObjectId === object.id && (
               <div className={styles.checkBoxBulb} />
             )}
           </div>

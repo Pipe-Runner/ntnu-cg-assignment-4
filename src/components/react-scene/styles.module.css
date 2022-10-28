@@ -26,14 +26,58 @@
 
 .keyboardControls {
   position: absolute;
-  min-width: 126px;
+  min-width: 260px;
   left: 8px;
   top: 8px;
-  padding: 8px;
+  padding: 4px 16px 16px 8px;
   background: var(--16dp);
   border-radius: 8px;
 }
 
-.guideContainer {
-  
+.keyboardControlsTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.keyboardControlsTitle > * + * {
+  margin-left: 8px;
+}
+
+.controlBlock {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 8px;
+  width: 30%;
+}
+
+.keysContainer {
+  display: flex;
+  flex-direction: column;
+  padding-left: 16px;
+  border-left: 1px solid;
+}
+
+.descriptionContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.modeBulb {
+  border-radius: 12px;
+  border: 1px solid var(--brand);
+  width: fit-content;
+  padding-inline: 16px;
+  margin-inline: auto;
+  margin-top: 16px;
 }

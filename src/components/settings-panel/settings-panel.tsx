@@ -8,35 +8,39 @@ import Tippy from "@tippyjs/react";
 import { FiSettings as SettingsIcon } from "react-icons/fi";
 import ColorBlock from "../color-block";
 import ObjectList from "../object-list/object-list";
-import { Object3D, ObjectTypes } from "@/types/object";
+import {
+  Object3D,
+  Object3DExtended,
+  ObjectTypes,
+  ResetType,
+} from "@/types/object";
 import { useState } from "react";
 import Tooltip from "../tooltip";
 
 type SettingsPanelProps = {
   onClickAdd: (type: ObjectTypes) => void;
   onClickRemove: (id: string) => void;
-  objectsMap: Record<string, Object3D>;
-  onSelectedObjectIDChange: (id: string | undefined) => void;
-  selectedObjectID: string | undefined;
-  input: any;
-  setInput: (arg: any) => void;
-  onClickReset: (
-    id: string,
-    type: "all" | "rotation" | "color" | "scale" | "position"
-  ) => void;
+  objectsMap: Record<string, Object3DExtended>;
+  onActiveObjectIdChange: (id: string | undefined) => void;
+  activeObjectId: string | undefined;
+  input: Object3D;
+  setInput: (arg: Object3D) => void;
+  onClickReset: (id: string, type: ResetType) => void;
 };
 
 const OPTIONS: { label: string; value: ObjectTypes }[] = [
   { label: "Quad", value: "quad" },
   { label: "Cube", value: "cube" },
+  { label: "Pyramid", value: "pyramid" },
+  { label: "Cylinder", value: "cylinder" },
 ];
 
 function SettingsPanel({
   onClickAdd,
   onClickRemove,
   objectsMap,
-  onSelectedObjectIDChange,
-  selectedObjectID,
+  onActiveObjectIdChange,
+  activeObjectId,
   input,
   setInput,
   onClickReset,
@@ -53,113 +57,126 @@ function SettingsPanel({
         <div>CONTROL PANEL</div>
       </div>
       <div className={styles.wrapper} style={{ marginBottom: 12 }}>
-        <Select options={OPTIONS} value={selectValue} />
+        <Select
+          isDisabled={!!activeObjectId}
+          options={OPTIONS}
+          value={selectValue}
+          onChangeOption={setSelectValue}
+        />
       </div>
       <div className={styles.wrapper}>
         <Input
           helperText="position-x"
-          value={input.position.x}
+          value={input.posX}
           onChange={(value: any) => {
             setInput({
               ...input,
-              position: { ...input.position, x: value },
+              posX: value,
+              isPositionDirty: true,
             });
-
-            if (selectedObjectID)
-              objectsMap[selectedObjectID].isPositionDirty = true;
           }}
         />
         <Input
           helperText="position-y"
-          value={input.position.y}
+          value={input.posY}
           onChange={(value: any) => {
             setInput({
               ...input,
-              position: { ...input.position, y: value },
+              posY: value,
+              isPositionDirty: true,
             });
-
-            if (selectedObjectID)
-              objectsMap[selectedObjectID].isPositionDirty = true;
           }}
         />
         <Input
           helperText="position-z"
-          value={input.position.z}
+          value={input.posZ}
           onChange={(value: any) => {
             setInput({
               ...input,
-              position: { ...input.position, z: value },
+              posZ: value,
+              isPositionDirty: true,
             });
-
-            if (selectedObjectID)
-              objectsMap[selectedObjectID].isPositionDirty = true;
           }}
         />
       </div>
       <div className={styles.wrapper}>
         <Input
           helperText="scale-x"
-          value={input.scale.x}
+          value={input.scaleX}
           onChange={(value: any) => {
             setInput({
               ...input,
-              scale: { ...input.scale, x: value },
+              scaleX: value,
+              isScaleDirty: true,
             });
-
-            if (selectedObjectID) objectsMap[selectedObjectID].isScaleDirty = true;
           }}
         />
         <Input
           helperText="scale-y"
-          value={input.scale.y}
+          value={input.scaleY}
           onChange={(value: any) => {
             setInput({
               ...input,
-              scale: { ...input.scale, y: value },
+              scaleY: value,
               isScaleDirty: true,
             });
-
-            if (selectedObjectID) objectsMap[selectedObjectID].isScaleDirty = true;
           }}
         />
         <Input
           helperText="scale-z"
-          value={input.scale.z}
+          value={input.scaleZ}
           onChange={(value: any) => {
             setInput({
               ...input,
-              scale: { ...input.scale, z: value },
+              scaleZ: value,
               isScaleDirty: true,
             });
-
-            if (selectedObjectID) objectsMap[selectedObjectID].isScaleDirty = true;
           }}
         />
       </div>
       <div className={styles.wrapper}>
-        <Input
-          helperText="rotation-z (deg)"
-          value={input.rotation.z}
+      <Input
+          helperText="rotation-x (deg)"
+          value={input.rotationX}
           onChange={(value: any) => {
             setInput({
               ...input,
-              rotation: { ...input.rotation, z: value },
+              rotationX: value,
               isRotationDirty: true,
             });
-
-            if (selectedObjectID)
-              objectsMap[selectedObjectID].isRotationDirty = true;
+          }}
+        />
+        <Input
+          helperText="rotation-y (deg)"
+          value={input.rotationY}
+          onChange={(value: any) => {
+            setInput({
+              ...input,
+              rotationY: value,
+              isRotationDirty: true,
+            });
+          }}
+        />
+        <Input
+          helperText="rotation-z (deg)"
+          value={input.rotationZ}
+          onChange={(value: any) => {
+            setInput({
+              ...input,
+              rotationZ: value,
+              isRotationDirty: true,
+            });
           }}
         />
       </div>
       <div className={styles.wrapper}>
         <Tooltip
-          isDisabled={!selectedObjectID}
+          isDisabled={!activeObjectId}
           content="Cannot add objects in Edit Mode. Please deselect active item
               (Click on item again)"
         >
           <Button
-            disabled={!!selectedObjectID}
+            disabled={!!activeObjectId}
             onClick={() => onClickAdd(selectValue.value)}
             label="Add"
           />
@@ -171,26 +188,24 @@ function SettingsPanel({
           content={
             <SketchPicker
               color={{
-                r: input.color.r * 255,
-                g: input.color.g * 255,
-                b: input.color.b * 255,
+                r: input.r * 255,
+                g: input.g * 255,
+                b: input.b * 255,
               }}
               onChange={({ rgb }) => {
                 setInput({
                   ...input,
-                  color: { r: rgb.r / 255, g: rgb.g / 255, b: rgb.b / 255 },
+                  r: rgb.r / 255,
+                  g: rgb.g / 255,
+                  b: rgb.b / 255,
+                  isColorDirty: true,
                 });
-
-                if (selectedObjectID)
-                  objectsMap[selectedObjectID].isColorDirty = true;
               }}
             />
           }
         >
           <ColorBlock
-            color={`rgb(${input.color.r * 255}, ${input.color.g * 255}, ${
-              input.color.b * 255
-            })`}
+            color={`rgb(${input.r * 255}, ${input.g * 255}, ${input.b * 255})`}
           />
         </Tippy>
       </div>
@@ -202,101 +217,101 @@ function SettingsPanel({
         }}
       >
         <ObjectList
-          onSelectedObjectIDChange={onSelectedObjectIDChange}
-          selectedObjectID={selectedObjectID}
+          onActiveObjectIdChange={onActiveObjectIdChange}
+          activeObjectId={activeObjectId}
           objectsMap={objectsMap}
         />
       </div>
       <div className={styles.wrapper}>
         <Tooltip
-          isDisabled={!!selectedObjectID}
+          isDisabled={!!activeObjectId}
           content="An active item should be selected from the list to reset position"
         >
           <Button
             label="Reset position"
             disabled={
-              !selectedObjectID || !objectsMap[selectedObjectID].isPositionDirty
+              !activeObjectId || !objectsMap[activeObjectId].isPositionDirty
             }
             onClick={() =>
-              selectedObjectID && onClickReset(selectedObjectID, "position")
+              activeObjectId && onClickReset(activeObjectId, "position")
             }
           />
         </Tooltip>
         <Tooltip
-          isDisabled={!!selectedObjectID}
+          isDisabled={!!activeObjectId}
           content="An active item should be selected from the list to reset scale"
         >
           <Button
             label="Reset Scale"
             disabled={
-              !selectedObjectID || !objectsMap[selectedObjectID].isScaleDirty
+              !activeObjectId || !objectsMap[activeObjectId].isScaleDirty
             }
             onClick={() =>
-              selectedObjectID && onClickReset(selectedObjectID, "scale")
+              activeObjectId && onClickReset(activeObjectId, "scale")
             }
           />
         </Tooltip>
       </div>
       <div className={styles.wrapper}>
         <Tooltip
-          isDisabled={!!selectedObjectID}
+          isDisabled={!!activeObjectId}
           content="An active item should be selected from the list to reset rotation"
         >
           <Button
             label="Reset Rotation"
             disabled={
-              !selectedObjectID || !objectsMap[selectedObjectID].isRotationDirty
+              !activeObjectId || !objectsMap[activeObjectId].isRotationDirty
             }
             onClick={() =>
-              selectedObjectID && onClickReset(selectedObjectID, "rotation")
+              activeObjectId && onClickReset(activeObjectId, "rotation")
             }
           />
         </Tooltip>
         <Tooltip
-          isDisabled={!!selectedObjectID}
+          isDisabled={!!activeObjectId}
           content="An active item should be selected from the list to reset color"
         >
           <Button
             label="Reset Color"
             disabled={
-              !selectedObjectID || !objectsMap[selectedObjectID].isColorDirty
+              !activeObjectId || !objectsMap[activeObjectId].isColorDirty
             }
             onClick={() =>
-              selectedObjectID && onClickReset(selectedObjectID, "color")
+              activeObjectId && onClickReset(activeObjectId, "color")
             }
           />
         </Tooltip>
       </div>
       <div className={styles.wrapper}>
         <Tooltip
-          isDisabled={!!selectedObjectID}
+          isDisabled={!!activeObjectId}
           content="An active item should be selected from the list to reset"
         >
           <Button
             disabled={
-              !selectedObjectID ||
+              !activeObjectId ||
               !(
-                objectsMap[selectedObjectID].isColorDirty ||
-                objectsMap[selectedObjectID].isPositionDirty ||
-                objectsMap[selectedObjectID].isRotationDirty ||
-                objectsMap[selectedObjectID].isScaleDirty
+                objectsMap[activeObjectId].isColorDirty ||
+                objectsMap[activeObjectId].isPositionDirty ||
+                objectsMap[activeObjectId].isRotationDirty ||
+                objectsMap[activeObjectId].isScaleDirty
               )
             }
             label="Reset"
             onClick={() =>
-              selectedObjectID && onClickReset(selectedObjectID, "all")
+              activeObjectId && onClickReset(activeObjectId, "all")
             }
           />
         </Tooltip>
       </div>
       <div className={styles.wrapper}>
         <Tooltip
-          isDisabled={!!selectedObjectID}
+          isDisabled={!!activeObjectId}
           content="An active item should be selected from the list to remove"
         >
           <Button
-            onClick={() => selectedObjectID && onClickRemove(selectedObjectID)}
-            disabled={!selectedObjectID}
+            onClick={() => activeObjectId && onClickRemove(activeObjectId)}
+            disabled={!activeObjectId}
             label="Remove"
           />
         </Tooltip>

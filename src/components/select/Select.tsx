@@ -1,11 +1,6 @@
 import { ObjectTypes } from "@/types/object";
 import ReactSelect from "react-select";
 
-type SelectType = {
-  value: { label: string; value: ObjectTypes };
-  options: { label: string; value: ObjectTypes }[];
-};
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomControlStyles = (base: any, state: any) => ({
   ...base,
@@ -36,10 +31,20 @@ const CustomSingleValueStyles = (base: any) => ({
   color: "var(--text-medium)",
 });
 
-function Select({ options, value }: SelectType) {
+type SelectType = {
+  value: { label: string; value: ObjectTypes };
+  options: { label: string; value: ObjectTypes }[];
+  onChangeOption: (option: { label: string; value: ObjectTypes }) => void;
+  isDisabled?: boolean;
+};
+
+function Select({ options, value, onChangeOption, isDisabled }: SelectType) {
   return (
-    <div style={{ width: "100%" }}>
+    <div
+      style={{ width: "100%", cursor: isDisabled ? "not-allowed" : "unset" }}
+    >
       <ReactSelect
+        isDisabled={isDisabled}
         value={value}
         options={options}
         styles={{
@@ -48,6 +53,13 @@ function Select({ options, value }: SelectType) {
           menu: CustomMenuStyles,
           option: CustomOptionStyles,
         }}
+        onChange={(newValue) =>
+          newValue &&
+          onChangeOption({
+            label: newValue.label,
+            value: newValue.value,
+          })
+        }
       />
     </div>
   );

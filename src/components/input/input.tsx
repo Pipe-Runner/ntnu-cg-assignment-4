@@ -1,7 +1,7 @@
 import styles from "./styles.module.css";
 
 type InputProps = {
-  value: string;
+  value: string | number;
   helperText: string;
   onChange: (value: string) => void;
 };

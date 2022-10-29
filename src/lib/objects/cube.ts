@@ -1,210 +1,72 @@
-// import { Color, Position, Rotation, Scale } from "@/types/object";
-// import { setAndActivateBuffer, setIndex } from "../utils/gpu-data";
-// import BaseObject from "./base-object";
+import { ObjectArgs } from "@/types/object";
+import BaseObject from "./base-object";
 
-// const vertices = [
-//   1.0,
-//   1.0,
-//   1.0,
-//   -1.0,
-//   1.0,
-//   1.0,
-//   -1.0,
-//   -1.0,
-//   1.0,
-//   1.0,
-//   -1.0,
-//   1.0, // v0-v1-v2-v3 front
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   -1.0,
-//   1.0,
-//   1.0,
-//   -1.0,
-//   -1.0,
-//   1.0,
-//   1.0,
-//   -1.0, // v0-v3-v4-v5 right
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   -1.0,
-//   -1.0,
-//   1.0,
-//   -1.0,
-//   -1.0,
-//   1.0,
-//   1.0, // v0-v5-v6-v1 up
-//   -1.0,
-//   1.0,
-//   1.0,
-//   -1.0,
-//   1.0,
-//   -1.0,
-//   -1.0,
-//   -1.0,
-//   -1.0,
-//   -1.0,
-//   -1.0,
-//   1.0, // v1-v6-v7-v2 left
-//   -1.0,
-//   -1.0,
-//   -1.0,
-//   1.0,
-//   -1.0,
-//   -1.0,
-//   1.0,
-//   -1.0,
-//   1.0,
-//   -1.0,
-//   -1.0,
-//   1.0, // v7-v4-v3-v2 down
-//   1.0,
-//   -1.0,
-//   -1.0,
-//   -1.0,
-//   -1.0,
-//   -1.0,
-//   -1.0,
-//   1.0,
-//   -1.0,
-//   1.0,
-//   1.0,
-//   -1.0, // v4-v7-v6-v5 back
-// ];
+class Cube extends BaseObject {
+  constructor(...args: ObjectArgs) {
+    const vertices = [];
+    const normals = [];
+    const colors = [];
+    const indices = [];
 
-// const colors = [
-//   // Colors
-//   0.4,
-//   0.4,
-//   1.0,
-//   0.4,
-//   0.4,
-//   1.0,
-//   0.4,
-//   0.4,
-//   1.0,
-//   0.4,
-//   0.4,
-//   1.0, // v0-v1-v2-v3 front(blue)
-//   0.4,
-//   1.0,
-//   0.4,
-//   0.4,
-//   1.0,
-//   0.4,
-//   0.4,
-//   1.0,
-//   0.4,
-//   0.4,
-//   1.0,
-//   0.4, // v0-v3-v4-v5 right(green)
-//   1.0,
-//   0.4,
-//   0.4,
-//   1.0,
-//   0.4,
-//   0.4,
-//   1.0,
-//   0.4,
-//   0.4,
-//   1.0,
-//   0.4,
-//   0.4, // v0-v5-v6-v1 up(red)
-//   1.0,
-//   1.0,
-//   0.4,
-//   1.0,
-//   1.0,
-//   0.4,
-//   1.0,
-//   1.0,
-//   0.4,
-//   1.0,
-//   1.0,
-//   0.4, // v1-v6-v7-v2 left
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0,
-//   1.0, // v7-v4-v3-v2 down
-//   0.4,
-//   1.0,
-//   1.0,
-//   0.4,
-//   1.0,
-//   1.0,
-//   0.4,
-//   1.0,
-//   1.0,
-//   0.4,
-//   1.0,
-//   1.0, // v4-v7-v6-v5 back
-// ];
+    const n = 4;
+    const angleStep = (2 * Math.PI) / n;
+    // Bottom
+    vertices.push(0.0, -1.0, 0.0);
+    colors.push(1.0, 0.0, 0.0);
+    normals.push(0.0, -1.0, 0.0);
+    for (let i = 0; i < n + 1; i++) {
+      vertices.push(Math.cos(i * angleStep), -1.0, Math.sin(i * angleStep));
+      colors.push(1.0, 0.0, 0.0);
+      normals.push(0.0, -1.0, 0.0);
+      if (i < n) {
+        indices.push(0, i + 1, i + 2);
+      }
+    }
 
-// const indices = [       // Indices of the vertices
-//   0, 1, 2,   0, 2, 3,    // front
-//   4, 5, 6,   4, 6, 7,    // right
-//   8, 9,10,   8,10,11,    // up
-//   12,13,14,  12,14,15,    // left
-//   16,17,18,  16,18,19,    // down
-//   20,21,22,  20,22,23     // back
-// ];
+    // Top
+    let indexOffset = vertices.length / 3;
+    vertices.push(0.0, 1.0, 0.0);
+    colors.push(1.0, 0.0, 0.0);
+    normals.push(0.0, 1.0, 0.0);
+    for (let i = 0; i < n + 1; i++) {
+      vertices.push(Math.cos(i * angleStep), 1.0, Math.sin(i * angleStep));
+      colors.push(1.0, 0.0, 0.0);
+      normals.push(0.0, 1.0, 0.0);
+      if (i < n) {
+        indices.push(indexOffset, indexOffset + i + 1, indexOffset + i + 2);
+      }
+    }
 
-// class Cube extends BaseObject {
-//   constructor(
-//     gl: WebGL2RenderingContext,
-//     private locations: Record<string, number>,
-//     position: Position,
-//     scale: Scale,
-//     rotation: Rotation,
-//     color: Color
-//   ) {
-//     super(
-//       gl,
-//       position,
-//       scale,
-//       rotation,
-//       color,
-//       vertices,
-//       colors,
-//       indices,
-//       vertices.length / 3
-//     );
-//   }
+    // Side
+    indexOffset = vertices.length / 3;
+    for (let i = 0; i < n + 1; i++) {
+      vertices.push(Math.cos(i * angleStep), -1.0, Math.sin(i * angleStep));
+      colors.push(1.0, 0.0, 0.0);
+      vertices.push(Math.cos(i * angleStep), 1.0, Math.sin(i * angleStep));
+      colors.push(1.0, 0.0, 0.0);
 
-//   preRender(): number {
-//     /**
-//      * Set attributes
-//      */
-//     setAndActivateBuffer(this.gl, this.locations.aPosition, this.vertices, 3);
-//     setAndActivateBuffer(this.gl, this.locations.aColor, this.colorsData, 3);
-//     setIndex(this.gl, this.indices);
+      const normal = [Math.cos(i * angleStep), 0.0, Math.sin(i * angleStep)];
+      normals.push(...normal);
+      normals.push(...normal);
 
-//     /**
-//      * Set uniforms
-//      */
-//     this.gl.uniformMatrix4fv(
-//       this.locations.uModelMatrix,
-//       false,
-//       this.modelMatrix.elements
-//     );
+      if (i < n) {
+        // upper level numbered odd
+        indices.push(
+          indexOffset + 2 * i + 1,
+          indexOffset + 2 * i,
+          indexOffset + 2 * i + 3
+        );
+        // bottom level numbered even
+        indices.push(
+          indexOffset + 2 * i,
+          indexOffset + 2 * i + 2,
+          indexOffset + 2 * i + 3
+        );
+      }
+    }
 
-//     return this.indices.length;
-//   }
-// }
+    super(...args, vertices, normals, colors, indices);
+  }
+}
 
-// export { Cube as default };
-
-export {}
+export { Cube as default };

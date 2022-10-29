@@ -1,14 +1,14 @@
 import { ObjectArgs } from "@/types/object";
 import BaseObject from "./base-object";
 
-class Quad extends BaseObject {
+class Disc extends BaseObject {
   constructor(...args: ObjectArgs) {
     const vertices = [];
     const normals = [];
     const colors = [];
     const indices = [];
 
-    const n = 4;
+    const n = 30;
     const angleStep = (2 * Math.PI) / n;
     // Bottom
     vertices.push(0.0, -0.0001, 0.0);
@@ -41,4 +41,4 @@ class Quad extends BaseObject {
   }
 }
 
-export { Quad as default };
+export { Disc as default };

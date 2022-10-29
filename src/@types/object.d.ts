@@ -1,4 +1,10 @@
-export type ObjectTypes = "quad" | "cube" | "pyramid" | "cylinder";
+export type ObjectTypes =
+  | "quad"
+  | "cube"
+  | "pyramid"
+  | "cone"
+  | "cylinder"
+  | "disc";
 
 export type Position = { x: number; y: number; z: number };
 export type Scale = Position;

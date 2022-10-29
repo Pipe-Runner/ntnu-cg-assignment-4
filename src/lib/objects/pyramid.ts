@@ -1,72 +1,58 @@
-// import { Color, Position, Rotation, Scale } from "@/types/object";
-// import { setAndActivateBuffer, setIndex } from "../utils/gpu-data";
-// import BaseObject from "./base-object";
+import { ObjectArgs } from "@/types/object";
+import BaseObject from "./base-object";
 
-// const vertices = [
-//   0,
-//   1,
-//   0, // v4
-//   0.5,
-//   0,
-//   0.5, // v0
-//   0.5,
-//   0,
-//   -0.5, // v1
-//   -0.5,
-//   0,
-//   -0.5, // v2
-//   -0.5,
-//   0,
-//   0.5, // v3
-// ];
+class Pyramid extends BaseObject {
+  constructor(...args: ObjectArgs) {
+    const vertices = [];
+    const normals = [];
+    const colors = [];
+    const indices = [];
 
-// const colors = new Array(15);
+    const n = 4;
+    const angleStep = (2 * Math.PI) / n;
+    // Bottom
+    vertices.push(0.0, 0.0, 0.0);
+    colors.push(1.0, 0.0, 0.0);
+    normals.push(0.0, -1.0, 0.0);
+    for (let i = 0; i < n + 1; i++) {
+      vertices.push(Math.cos(i * angleStep), 0.0, Math.sin(i * angleStep));
+      colors.push(1.0, 0.0, 0.0);
+      normals.push(0.0, -1.0, 0.0);
+      if (i < n) {
+        indices.push(0, i + 1, i + 2);
+      }
+    }
 
-// const indices = [0, 1, 2, 0, 2, 3, 0, 1, 4, 1, 2, 4, 3, 2, 4, 0, 3, 4];
+    // Side
+    const indexOffset = vertices.length / 3;
+    for (let i = 0; i < n + 1; i++) {
+      vertices.push(Math.cos(i * angleStep), 0.0, Math.sin(i * angleStep));
+      colors.push(1.0, 0.0, 0.0);
+      vertices.push(0, 1.0, 0);
+      colors.push(1.0, 0.0, 0.0);
 
-// class Pyramid extends BaseObject {
-//   constructor(
-//     gl: WebGL2RenderingContext,
-//     private locations: Record<string, number>,
-//     position: Position,
-//     scale: Scale,
-//     rotation: Rotation,
-//     color: Color
-//   ) {
-//     super(
-//       gl,
-//       position,
-//       scale,
-//       rotation,
-//       color,
-//       vertices,
-//       colors,
-//       indices,
-//       colors.length / 3
-//     );
-//   }
+      const normal = [Math.cos(i * angleStep), 1.0, Math.sin(i * angleStep)];
+      normals.push(...normal);
+      normals.push(...normal);
 
-//   preRender(): number {
-//     /**
-//      * Set attributes
-//      */
-//     setAndActivateBuffer(this.gl, this.locations.aPosition, this.vertices, 3);
-//     setAndActivateBuffer(this.gl, this.locations.aColor, this.colorsData, 3);
-//     setIndex(this.gl, this.indices);
+      if (i < n) {
+        // upper level numbered odd
+        indices.push(
+          indexOffset + 2 * i + 1,
+          indexOffset + 2 * i,
+          indexOffset + 2 * i + 3
+        );
+        // bottom level numbered even
+        indices.push(
+          indexOffset + 2 * i,
+          indexOffset + 2 * i + 2,
+          indexOffset + 2 * i + 3
+        );
+      }
+    }
 
-//     /**
-//      * Set uniforms
-//      */
-//     this.gl.uniformMatrix4fv(
-//       this.locations.uModelMatrix,
-//       false,
-//       this.modelMatrix.elements
-//     );
+    super(...args, vertices, normals, colors, indices);
+  }
+}
 
-//     return this.indices.length;
-//   }
-// }
-
-// export { Pyramid as default };
-
-export {}
+export { Pyramid as default };

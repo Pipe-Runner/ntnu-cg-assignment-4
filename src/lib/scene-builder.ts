@@ -6,9 +6,11 @@ import { getLocations } from "./utils/locations";
 import { Mat4, Vec3 } from "cuon-matrix-ts";
 import { Color, ObjectTypes, Position, Rotation, Scale } from "@/types/object";
 import Cylinder from "./objects/cylinder";
-// import Cube from "./objects/cube";
-// import Quad from "./objects/quad";
-// import pyramid from "./objects/pyramid";
+import Cone from "./objects/cone";
+import Cube from "./objects/cube";
+import Quad from "./objects/quad";
+import Pyramid from "./objects/pyramid";
+import Disc from "./objects/disc";
 
 class SceneBuilder {
   private canvas: HTMLCanvasElement;
@@ -29,6 +31,10 @@ class SceneBuilder {
 
     // Enable depth test
     this.gl.enable(this.gl.DEPTH_TEST);
+
+    // face culling
+    // this.gl.enable(this.gl.CULL_FACE);
+    // this.gl.cullFace(this.gl.BACK);
 
     const program = createProgram(
       this.gl,
@@ -82,36 +88,56 @@ class SceneBuilder {
     color: Color
   ) {
     switch (type) {
-      // case "quad":
-      //   this.objectMap[id] = new Quad(
-      //     this.gl,
-      //     this.locations,
-      //     position,
-      //     scale,
-      //     rotation,
-      //     color
-      //   );
-      //   break;
-      // case "cube":
-      //   this.objectMap[id] = new Cube(
-      //     this.gl,
-      //     this.locations,
-      //     position,
-      //     scale,
-      //     rotation,
-      //     color
-      //   );
-      //   break;
-      // case "pyramid":
-      //   this.objectMap[id] = new pyramid(
-      //     this.gl,
-      //     this.locations,
-      //     position,
-      //     scale,
-      //     rotation,
-      //     color
-      //   );
-      //   break;
+      case "quad":
+        this.objectMap[id] = new Quad(
+          this.gl,
+          this.locations,
+          position,
+          scale,
+          rotation,
+          color
+        );
+        break;
+      case "disc":
+        this.objectMap[id] = new Disc(
+          this.gl,
+          this.locations,
+          position,
+          scale,
+          rotation,
+          color
+        );
+        break;
+      case "cube":
+        this.objectMap[id] = new Cube(
+          this.gl,
+          this.locations,
+          position,
+          scale,
+          rotation,
+          color
+        );
+        break;
+      case "pyramid":
+        this.objectMap[id] = new Pyramid(
+          this.gl,
+          this.locations,
+          position,
+          scale,
+          rotation,
+          color
+        );
+        break;
+      case "cone":
+        this.objectMap[id] = new Cone(
+          this.gl,
+          this.locations,
+          position,
+          scale,
+          rotation,
+          color
+        );
+        break;
       case "cylinder":
         this.objectMap[id] = new Cylinder(
           this.gl,

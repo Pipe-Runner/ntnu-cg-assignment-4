@@ -41,12 +41,12 @@ abstract class BaseObject {
     this.scale = scale;
     this.rotation = rotation;
 
-    // reconstruct model matrix
+    // reconstruct model matrix (T * R * S)
     this.modelMatrix.setTranslate(position.x, position.y, position.z);
-    this.modelMatrix.scale(scale.x, scale.y, scale.z);
     this.modelMatrix.rotate(rotation.x, 1, 0, 0);
     this.modelMatrix.rotate(rotation.y, 0, 1, 0);
     this.modelMatrix.rotate(rotation.z, 0, 0, 1);
+    this.modelMatrix.scale(scale.x, scale.y, scale.z);
 
     // reconstruct normal matrix
     this.normalMatrix.setInverseOf(this.modelMatrix);

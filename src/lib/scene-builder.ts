@@ -8,9 +8,10 @@ import { Color, ObjectTypes, Position, Rotation, Scale } from "@/types/object";
 import Cylinder from "./objects/cylinder";
 import Cone from "./objects/cone";
 import Cube from "./objects/cube";
-import Quad from "./objects/quad";
+import Plane from "./objects/plane";
 import Pyramid from "./objects/pyramid";
 import Disc from "./objects/disc";
+import Torus from "./objects/torus";
 
 class SceneBuilder {
   private canvas: HTMLCanvasElement;
@@ -88,8 +89,8 @@ class SceneBuilder {
     color: Color
   ) {
     switch (type) {
-      case "quad":
-        this.objectMap[id] = new Quad(
+      case "plane":
+        this.objectMap[id] = new Plane(
           this.gl,
           this.locations,
           position,
@@ -148,6 +149,16 @@ class SceneBuilder {
           color
         );
         break;
+        case "torus":
+          this.objectMap[id] = new Torus(
+            this.gl,
+            this.locations,
+            position,
+            scale,
+            rotation,
+            color
+          );
+          break;
       default:
         break;
     }

@@ -1,10 +1,11 @@
 import { Object3DExtended } from "@/types/object";
 import styles from "./styles.module.css";
-import { IoSquareSharp as QuadIcon } from "react-icons/io5";
+import { IoSquareSharp as PlaneIcon } from "react-icons/io5";
 import { AiTwotoneQuestionCircle as DiscIcon } from "react-icons/ai";
 import { BiCube as CubeIcon, BiPyramid as PyramidIcon } from "react-icons/bi";
 import { TbCone as ConeIcon } from "react-icons/tb";
 import { BiCylinder as CylinderIcon } from "react-icons/bi";
+import { FiDisc as TorusIcon } from "react-icons/fi";
 
 type ObjectListProps = {
   objectsMap: Record<string, Object3DExtended>;
@@ -20,7 +21,7 @@ function ObjectList({
   return (
     <div className={styles.container}>
       {Object.values(objectsMap).map((object) => {
-        let ShapeIcon = QuadIcon;
+        let ShapeIcon = PlaneIcon;
 
         switch (object.type) {
           case "disc":
@@ -37,6 +38,9 @@ function ObjectList({
             break;
           case "cylinder":
             ShapeIcon = CylinderIcon;
+            break;
+          case "torus":
+            ShapeIcon = TorusIcon;
             break;
           default:
             break;

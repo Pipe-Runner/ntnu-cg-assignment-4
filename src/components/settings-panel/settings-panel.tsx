@@ -29,12 +29,13 @@ type SettingsPanelProps = {
 };
 
 const OPTIONS: { label: string; value: ObjectTypes }[] = [
-  { label: "Quad", value: "quad" },
+  { label: "Plane", value: "plane" },
   { label: "Disc", value: "disc" },
   { label: "Cube", value: "cube" },
   { label: "Pyramid", value: "pyramid" },
   { label: "Cone", value: "cone" },
   { label: "Cylinder", value: "cylinder" },
+  { label: "Torus", value: "torus" },
 ];
 
 function SettingsPanel({

@@ -1,10 +1,12 @@
 export type ObjectTypes =
-  | "quad"
+  | "plane"
   | "cube"
   | "pyramid"
   | "cone"
   | "cylinder"
-  | "disc";
+  | "disc"
+  | "sphere"
+  | "torus";
 
 export type Position = { x: number; y: number; z: number };
 export type Scale = Position;

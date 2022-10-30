@@ -1,43 +1,18 @@
 import { ObjectArgs } from "@/types/object";
+import { generateCurvedShapes } from "../utils/vertex-generator";
 import BaseObject from "./base-object";
 
 class Disc extends BaseObject {
   constructor(...args: ObjectArgs) {
-    const vertices = [];
-    const normals = [];
-    const colors = [];
-    const indices = [];
+    const { vertices, normals, indices } = generateCurvedShapes(
+      50,
+      true,
+      1,
+      1e-4,
+      false
+    );
 
-    const n = 30;
-    const angleStep = (2 * Math.PI) / n;
-    // Bottom
-    vertices.push(0.0, -0.0001, 0.0);
-    colors.push(1.0, 0.0, 0.0);
-    normals.push(0.0, -1, 0.0);
-    for (let i = 0; i < n + 1; i++) {
-      vertices.push(Math.cos(i * angleStep), -0.0001, Math.sin(i * angleStep));
-      colors.push(1.0, 0.0, 0.0);
-      normals.push(0.0, -1, 0.0);
-      if (i < n) {
-        indices.push(0, i + 1, i + 2);
-      }
-    }
-
-    // Top
-    let indexOffset = vertices.length / 3;
-    vertices.push(0.0, 0.0001, 0.0);
-    colors.push(1.0, 0.0, 0.0);
-    normals.push(0.0, 1, 0.0);
-    for (let i = 0; i < n + 1; i++) {
-      vertices.push(Math.cos(i * angleStep), 0.0001, Math.sin(i * angleStep));
-      colors.push(1.0, 0.0, 0.0);
-      normals.push(0.0, 1.0, 0.0);
-      if (i < n) {
-        indices.push(indexOffset, indexOffset + i + 1, indexOffset + i + 2);
-      }
-    }
-
-    super(...args, vertices, normals, colors, indices);
+    super(...args, vertices, normals, new Array(vertices.length / 3), indices);
   }
 }
 

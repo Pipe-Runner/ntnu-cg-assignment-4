@@ -149,6 +149,7 @@ class SceneBuilder {
           rotation,
           color
         );
+        break;
       case "sphere":
         this.objectMap[id] = new Sphere(
           this.gl,

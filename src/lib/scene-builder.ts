@@ -12,6 +12,7 @@ import Plane from "./objects/plane";
 import Pyramid from "./objects/pyramid";
 import Disc from "./objects/disc";
 import Torus from "./objects/torus";
+import Sphere from "./objects/sphere";
 
 class SceneBuilder {
   private canvas: HTMLCanvasElement;
@@ -148,17 +149,26 @@ class SceneBuilder {
           rotation,
           color
         );
+      case "sphere":
+        this.objectMap[id] = new Sphere(
+          this.gl,
+          this.locations,
+          position,
+          scale,
+          rotation,
+          color
+        );
         break;
-        case "torus":
-          this.objectMap[id] = new Torus(
-            this.gl,
-            this.locations,
-            position,
-            scale,
-            rotation,
-            color
-          );
-          break;
+      case "torus":
+        this.objectMap[id] = new Torus(
+          this.gl,
+          this.locations,
+          position,
+          scale,
+          rotation,
+          color
+        );
+        break;
       default:
         break;
     }

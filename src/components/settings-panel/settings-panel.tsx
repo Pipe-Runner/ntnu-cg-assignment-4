@@ -35,6 +35,7 @@ const OPTIONS: { label: string; value: ObjectTypes }[] = [
   { label: "Pyramid", value: "pyramid" },
   { label: "Cone", value: "cone" },
   { label: "Cylinder", value: "cylinder" },
+  { label: "Sphere", value: "sphere" },
   { label: "Torus", value: "torus" },
 ];
 

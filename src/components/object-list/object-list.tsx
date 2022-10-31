@@ -6,6 +6,7 @@ import { BiCube as CubeIcon, BiPyramid as PyramidIcon } from "react-icons/bi";
 import { TbCone as ConeIcon } from "react-icons/tb";
 import { BiCylinder as CylinderIcon } from "react-icons/bi";
 import { FiDisc as TorusIcon } from "react-icons/fi";
+import { ImSphere as SphereIcon } from "react-icons/im";
 
 type ObjectListProps = {
   objectsMap: Record<string, Object3DExtended>;
@@ -38,6 +39,9 @@ function ObjectList({
             break;
           case "cylinder":
             ShapeIcon = CylinderIcon;
+            break;
+          case "sphere":
+            ShapeIcon = SphereIcon;
             break;
           case "torus":
             ShapeIcon = TorusIcon;

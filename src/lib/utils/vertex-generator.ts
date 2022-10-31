@@ -280,6 +280,46 @@ export function generatePlane(
   return { vertices, normals, indices };
 }
 
+export function generateSphere(
+  radius: number = 1,
+  subdivisions: number = 10
+): { vertices: number[]; normals: number[]; indices: number[] } {
+  const vertices = [];
+  const normals = [];
+  const indices = [];
+
+  const thetaStep = (2 * Math.PI) / subdivisions;
+  const yStep = Math.PI / subdivisions;
+
+  for (let r = 0; r <= subdivisions; r++) {
+    for (let c = 0; c <= subdivisions; c++) {
+      const h = radius * Math.sin(Math.PI / 2 - r * yStep);
+      const radiusPrime = radius * Math.cos(Math.PI / 2 - r * yStep);
+      const x = radiusPrime * Math.cos(c * thetaStep);
+      const y = radiusPrime * Math.sin(c * thetaStep);
+
+      vertices.push(x, h, y);
+      normals.push(x, h, y);
+
+      // TODO: Debug r <= subdivision; (calculations suggest r < subdivisions)
+      if (r <= subdivisions && c < subdivisions) {
+        indices.push(
+          r * subdivisions + c,
+          (r + 1) * subdivisions + c,
+          (r + 1) * subdivisions + c + 1
+        );
+        indices.push(
+          r * subdivisions + c,
+          (r + 1) * subdivisions + c + 1,
+          r * subdivisions + c + 1
+        );
+      }
+    }
+  }
+
+  return { vertices, normals, indices };
+}
+
 export function generateTorus(
   slices = 8,
   loops = 20,
@@ -298,9 +338,6 @@ export function generateTorus(
     const slice_rad = outerRadius + innerRadius * cos_slices;
 
     for (let loop = 0; loop <= loops; ++loop) {
-      //   x=(R+r·cos(v))cos(w)
-      //   y=(R+r·cos(v))sin(w)
-      //             z=r.sin(v)
       const u = loop / loops;
       const loop_angle = u * 2 * Math.PI;
       const cos_loops = Math.cos(loop_angle);
@@ -311,13 +348,10 @@ export function generateTorus(
       const z = innerRadius * sin_slices;
 
       vertices.push(x, y, z);
+      // TODO: Fix normals
       normals.push(cos_loops * sin_slices, sin_loops * sin_slices, cos_slices);
     }
   }
-
-  // 0  1  2  3  4  5
-  // 6  7  8  9  10 11
-  // 12 13 14 15 16 17
 
   const vertsPerSlice = loops + 1;
   for (let i = 0; i < slices; ++i) {

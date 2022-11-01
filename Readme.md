@@ -1,6 +1,11 @@
 # Scene Builder [CG Assignment 4]
 This builder let's the user create and interact with basic shapes created using raw WebGL and Typescript. The source code has been developed in accordance to questions asked in CG Assignment 4.
 
+![Preview](https://user-images.githubusercontent.com/19551058/199144110-c1ecb803-ceda-43d2-b929-61996700ce45.png)
+
+The code is available at: https://github.com/Pipe-Runner/ntnu-cg-assignment-4  
+The web app is hosted at: https://pipe-runner.github.io/ntnu-cg-assignment-4/
+
 ## Setup
 In project root:  
 `npm install`
